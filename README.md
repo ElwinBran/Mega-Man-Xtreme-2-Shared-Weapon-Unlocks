@@ -1,4 +1,4 @@
-# Mega Man Xtreme-2: Shared Weapon Unlocks
+# Mega Man Xtreme 2: Shared Weapon Unlocks
 A patch for Mega Man Xtreme 2 that makes weapons acquired from the robot masters shared.
 This is in line with how the X5 game is designed. The patch is built on 
 
