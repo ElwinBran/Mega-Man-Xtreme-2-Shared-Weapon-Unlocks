@@ -1,0 +1,133 @@
+LOC    OBJ              LINE   SOURCE
+                        1      ; Start of patch
+                        2      ; Changes initialization code in Rom bank 28
+                        3      ; Store register BC to be sure.                  
+0A39CE C5               4      ; PUSH BC
+0A39CF 0600             5      ; LD B, 0x00
+0A39D1 0E01             6      ; LD C, 0x01
+                        7      ; Start of loop, check if the weapon is present in Zero's flags
+0A39D3 FAA0C0           8      ; LD A, ($C0A0)
+0A39D6 A1               9      ; AND C
+0A39D7 3E00             10     ; LD A, 0x00
+0A39D9 2804             11     ; JR Z, +#4
+0A39DB 3E40             12     ; LD A, 0x40
+0A39DD 1803             13     ; JR +#3
+                        14     ; Check the X weapon flag next (modified original code)
+0A39DF 7E               15     ; LD A, (HL)
+0A39E0 E640             16     ; AND A, 0x40
+0A39E2 2809             17     ; JR Z, +#9
+                        18     ; Store the flag in Zero's weapons if present with X
+0A39E4 57               19     ; LD D, A
+0A39E5 FAA0C0           20     ; LD A, ($C0A0)
+0A39E8 B1               21     ; OR C
+0A39E9 EAA0C0           22     ; LD ($C0A0), A
+0A39EC 7A               23     ; LD A, D
+0A39ED F61C             24     ; OR A, 0x1C
+                        25     ; Original code
+0A39EF 22               26     ; LDI  (HL), A
+0A39F0 04               27     ; INC B
+0A39F1 CB21             28     ; SLA C
+0A39F3 78               29     ; LD A, B
+0A39F4 FE08             30     ; CP 0x08
+                        31     ; Major change; the init code is now a loop
+0A39F6 20DB             32     ; JR NZ, -#37
+                        31     ; restore BC
+0A39F8 C1               33     ; POP BC
+                        34     ; Padding
+0A39F9 00               35     ; NOP
+0A39FA 00               36     ; NOP
+0A39FB 00               37     ; NOP
+0A39FC 00               38     ; NOP
+0A39FD 00               38     ; NOP
+======
+                        39     ; Changes two routines in Rom bank 1D: menu code specifically
+                        40     ; First, X:
+                        41     ; Loop over all weapons and test whether the menu should render them
+07506D 2179CA           42     ; LD HL, 0xCA79
+075070 3601             43     ; LD (HL), 0x01
+075072 0601             44     ; LD B, 0x01
+075074 0E01             45     ; LD C, 0x01
+075076 116DC0           46     ; LD DE, 0xC06D
+075079 13               47     ; INC DE
+07507A 217ACA           48     ; LD HL, 0xCA7A
+07507D 3600             49     ; LD (LH), 0x00
+07507F 1A               50     ; LD A, (DE)
+075080 E640             51     ; AND 0x40
+                        52     ; Flag found, go to 'graphics call' to ensure weapon icon is drawn in menu
+075082 C2EA7F           53     ; JP NZ, $7FEA
+075085 3E01             54     ; LD A, 0x01
+075087 B8               55     ; CP B
+                        56     ; Skip Zero flag checking (because there are more X than Zero flags)
+075088 CAC17F           57     ; JP, Z $7FC1
+07508B FAA0C0           58     ; LD A, $C0A0
+07508E A1               59     ; AND C
+                        60     ; The code continues in free space.
+07508F C3BF7F           61     ; JP $7FBF
+------
+                        62     ; Then replacing original Zero code, follows the same pattern as X
+07511C D5               63     ; PUSH DE
+07511D 0602             64     ; LD B, 0x02
+07511F 0E01             65     ; LD C, 0x01
+075121 116FC0           66     ; LD DE, $C06F
+075124 217BCA           67     ; LD HL, CA7B
+075127 3600             68     ; LD (HL), 0x00
+075129 1A               69     ; LD A, (DE)
+07512A E640             70     ; AND 0x40
+07512C C2F57F           71     ; JP NZ, $7FF5
+07512F FAA0C0           72     ; LD A, ($C0A0)
+075132 A1               73     ; AND C
+075133 C2F57F           74     ; JP NZ, $7FF5
+                        75     ; Free space jump
+075136 C3D87F           76     ; JP $7FD8 
+                        77     ; Padding
+075139 00               78     ; NOP
+------
+                        79     ; X routine continuation
+                        80     ; Flag check still loaded, go to graphics call if set.
+077FBF 2029             81     ; JR NZ, +#41
+077FC1 23               82     ; INC HL
+077FC2 13               83     ; INC DE
+077FC3 3E01             84     ; LD A, 0x01
+077FC5 B8               85     ; CP B
+077FC6 2802             86     ; JR Z, +#2
+077FC8 CB21             87     ; SLA C
+077FCA 04               88     ; INC B
+077FCB 78               89     ; LD A, B
+077FCC FE0A             90     ; CP 0x0A
+077FCE C8               91     ; RET Z
+                        92     ; Loop if not all weapons are checked yet.
+077FCF C37D50           93     ; JP $507D
+------
+                        94     ; Zero routine continuation
+077FD8 23               95     ; INC HL
+077FD9 13               96     ; INC DE
+077FDA CB21             97     ; SLA C
+077FDC 04               98     ; INC B
+077FDD 78               99     ; LD A, B
+077FDE FE0A             100    ; CP 0x0A
+077FE0 C22751           101    ; JP NZ, $5127
+077FE3 D1               102    ; POP DE
+077FE4 C9               103    ; RET
+------
+                        104    ; X 'graphics call'
+                        105    ; turned into seperate subroutine because of duplicate usage.
+077FEA E5               106    ; PUSH HL
+077FEB D5               107    ; PUSH DE
+077FEC C5               108    ; PUSH BC
+077FED CD9250           109    ; CALL $5092
+077FF0 C1               110    ; POP  BC
+077FF1 D1               111    ; POP  DE
+077FF2 E1               112    ; POP  HL
+                        113    ; Jumps back to checks before loop code
+077FF3 18CC             114    ; JR -#49 
+------
+                        115    ; Zero 'graphics call'
+                        116    ; Slightly changed original code (storing and recovering DE)
+077FF5 E5               117    ; PUSH HL
+077FF6 D5               118    ; PUSH DE
+077FF7 C5               119    ; PUSH BC
+077FF8 CD3A51           120    ; CALL $513A
+077FFB C1               121    ; POP BC
+077FFC D1               122    ; POP DE
+077FFD E1               123    ; POP HL
+077FFE 18D8             124    ; JR -#33 s
