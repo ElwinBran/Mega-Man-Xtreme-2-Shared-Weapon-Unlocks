@@ -1,8 +1,9 @@
 # Mega Man Xtreme 2: Shared Weapon Unlocks
-A patch for Mega Man Xtreme 2 that makes weapons acquired from the robot masters shared.
-This is in line with how the X5 game is designed. The patch is built on 
+A patch for Mega Man Xtreme 2 that makes weapons acquired from the robot masters shared. 
+A detailed description can be found [on the RomHacking page of this hack](https://www.romhacking.net/hacks/7084/), as well as an alternative download link. 
 
-Work in progress!
+## Future plans
+The patch might get a more stable release as the Patch code is tweaked to no longer affect save game data.
 
 ## Tools
 - [The BGB emulator](http://bgb.bircd.org/#downloads), for disassembly, hex editing, memory viewing, testing and even breakpoints.
