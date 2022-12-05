@@ -2,9 +2,6 @@
 A patch for Mega Man Xtreme 2 that makes weapons acquired from the robot masters shared. 
 A detailed description can be found [on the RomHacking page of this hack](https://www.romhacking.net/hacks/7084/), as well as an alternative download link. 
 
-## Future plans
-The patch might get a more stable release as the Patch code is tweaked to no longer affect save game data.
-
 ## Tools
 - [The BGB emulator](http://bgb.bircd.org/#downloads), for disassembly, hex editing, memory viewing, testing and even breakpoints.
 - [HxD](https://mh-nexus.de/en/hxd/), a clean hex editor used to study the save files with.
